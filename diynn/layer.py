@@ -19,10 +19,9 @@ class NNLayer:
         """
 
         self.activation = getattr(np, activation)
-        self.weights =  np.random.uniform(size=(noutputs, ninputs))
-        self.biases = np.random.uniform(size=(noutputs,1))
+        self.weights = np.random.uniform(size=(noutputs, ninputs))
+        self.biases = np.random.uniform(size=(noutputs, 1))
 
-    
     def forward(self, inputs: np.array) -> np.array:
         """
         Forward propagation
