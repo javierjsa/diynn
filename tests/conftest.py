@@ -2,11 +2,11 @@ from pytest import fixture
 import numpy as np
 
 
-
 @fixture(scope="function")
 def inputs(request):
 
-    return np.random.uniform(size=(request.param[0],request.param[1]))
+    return np.random.uniform(size=(request.param[0], request.param[1]))
+
 
 @fixture(scope="function")
 def labels(request):
