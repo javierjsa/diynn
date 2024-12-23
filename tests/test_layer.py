@@ -3,6 +3,7 @@ import numpy as np
 from diynn.layer import NNLayer
 from diynn.activation import Sigmoid
 from diynn.cost_function import MeanSquaredError
+from diynn.flatten import Flatten
 
 
 @pytest.mark.parametrize("inputs", [(5, 1)], indirect=True)
@@ -105,3 +106,36 @@ def test_backward_with_cost(inputs, labels):
 
     gradient = layers[0].backward(gradient)
     assert gradient.shape == layers[0].inputs.shape
+
+@pytest.mark.parametrize(
+    "inputs, labels", [(((5, 5), 10), (2, 10))], indirect=True
+)
+def test_backward_with_cost_and_flatten(inputs, labels):
+    flatten = Flatten()
+    input_layer = NNLayer(ninputs= 5 * 5, noutputs=10, activation=Sigmoid)
+    hidden_layer = NNLayer(ninputs= 10, noutputs=5, activation=Sigmoid)
+    output_layer = NNLayer(ninputs=5, noutputs=2, activation=Sigmoid)
+    cost = MeanSquaredError()
+
+    layers = [flatten, input_layer, hidden_layer, output_layer]
+
+    for layer in layers:
+        inputs = layer(inputs)
+
+    loss = cost(inputs, labels)
+
+    assert loss >= 0
+
+    gradient = cost.backward()
+
+    gradient = layers[3].backward(gradient)
+    assert gradient.shape == layers[3].inputs.shape
+
+    gradient = layers[2].backward(gradient)
+    assert gradient.shape == layers[2].inputs.shape
+
+    gradient = layers[1].backward(gradient)
+    assert gradient.shape == layers[1].inputs.shape
+
+    gradient = layers[0].backward(gradient)
+    assert gradient.shape == flatten.shape
